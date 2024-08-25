@@ -21,12 +21,17 @@
     },
     {
         "id": 2007690154,
-        "title": "Learn Rust\n",
+        "title": "Learn Rust",
         "completed": false
     },
     {
         "id": 2079265427,
         "title": "Go shopping",
+        "completed": false
+    },
+    {
+        "id": 1605177955,
+        "title": "Do a live stream on Twitch",
         "completed": false
     }
 ]

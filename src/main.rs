@@ -1,6 +1,6 @@
 use std::{
     fs::File,
-    io::{BufReader, Write},
+    io::{BufReader, ErrorKind, Write},
 };
 
 use clap::Parser;
@@ -28,8 +28,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let command = args.command;
     match command.as_str() {
         "add" => add_todo(),
-        "list" => list_todo(),
-        "remove" => remove_todo(),
+        "list" => list_tasks(),
+        "remove" => remove_task(),
         _ => panic!("Invalid command was provided!"),
     };
 
@@ -66,10 +66,11 @@ fn add_todo() {
     let tasks = serde_json::to_string(&tasks)
         .unwrap_or_else(|err| panic!("Error while converting the tasks vector to JSON: {err:?}"));
 
-    let mut tasks_file = File::create(TASKS_FILE_NAME)
-        .unwrap_or_else(|err| panic!("Error while reading the {TASKS_FILE_NAME} file: {err:?}"));
+    // get the json file in write mode
+    let mut file = read_tasks_file(true);
 
-    tasks_file.write(tasks.as_bytes()).unwrap_or_else(|err| {
+    // write the tasks vector as a JSON to the json file
+    file.write(tasks.as_bytes()).unwrap_or_else(|err| {
         panic!(
             "Error while writing the tasks vector content to the {TASKS_FILE_NAME} file: {err:?}"
         )
@@ -82,15 +83,22 @@ fn generate_random_id() -> i32 {
     rng.gen::<i32>()
 }
 
-fn list_todo() {}
+fn list_tasks() {
+    let tasks = get_all_tasks();
 
-fn remove_todo() {}
+    println!("You have {} tasks: ", tasks.len());
+
+    for task in tasks {
+        println!("{}", task.title)
+    }
+}
+
+fn remove_task() {}
 
 fn get_all_tasks() -> Vec<Task> {
-    let tasks_file = File::open(TASKS_FILE_NAME)
-        .unwrap_or_else(|err| panic!("Error while reading the {TASKS_FILE_NAME} file: {err:?}"));
+    let file = read_tasks_file(false);
 
-    let reader = BufReader::new(tasks_file);
+    let reader = BufReader::new(file);
 
     let tasks: Vec<Task> = serde_json::from_reader(reader).unwrap_or_else(|err| {
         panic!(
@@ -99,4 +107,26 @@ fn get_all_tasks() -> Vec<Task> {
     });
 
     tasks
+}
+
+fn read_tasks_file(should_open_in_write_mode: bool) -> File {
+    let file: File;
+
+    if should_open_in_write_mode {
+        file = File::create(TASKS_FILE_NAME).unwrap_or_else(|err| {
+            panic!("Error while reading the contents of the {TASKS_FILE_NAME} file: {err:?}")
+        });
+    } else {
+        file = File::open(TASKS_FILE_NAME).unwrap_or_else(|err| {
+            if err.kind() == ErrorKind::NotFound {
+                File::create(TASKS_FILE_NAME).unwrap_or_else(|err| {
+                    panic!("Error while creating the {TASKS_FILE_NAME} file: {err:?}")
+                })
+            } else {
+                panic!("Error while opening the {TASKS_FILE_NAME} file: {err:?}")
+            }
+        })
+    }
+
+    file
 }
