@@ -8,29 +8,43 @@ use rand::prelude::*;
 use serde::{Deserialize, Serialize};
 use serde_json;
 
-#[derive(Parser)]
+#[derive(Parser, Debug)]
 struct Cli {
-    command: String,
-    // add, list, remove
+    #[clap(subcommand)]
+    command: Command,
+}
+
+#[derive(Debug, clap::Subcommand)]
+enum Command {
+    ADD,
+    LIST {
+        #[clap(short, long, action)]
+        completed: Option<bool>,
+    },
+    REMOVE {
+        #[clap(short, long, action)]
+        completed: Option<bool>,
+        #[clap(short, long, action)]
+        id: Option<i32>,
+    },
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Task {
     id: i32,
     title: String,
-    completed: bool,
+    completed: Option<bool>,
 }
 
 static TASKS_FILE_NAME: &str = "tasks.json";
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Cli::parse();
-    let command = args.command;
-    match command.as_str() {
-        "add" => add_todo(),
-        "list" => list_tasks(),
-        "remove" => remove_task(),
-        _ => panic!("Invalid command was provided!"),
+    let command = &args.command;
+    match command {
+        Command::ADD => add_todo(),
+        Command::LIST { completed } => list_tasks(completed.to_owned()),
+        Command::REMOVE { completed, id } => remove_task(completed.to_owned(), id.to_owned()),
     };
 
     Ok(())
@@ -54,7 +68,7 @@ fn add_todo() {
 
     // create a new task
     let new_task = Task {
-        completed: false,
+        completed: Some(false),
         id: generate_random_id(),
         title: task_name.trim().to_string(),
     };
@@ -83,17 +97,81 @@ fn generate_random_id() -> i32 {
     rng.gen::<i32>()
 }
 
-fn list_tasks() {
-    let tasks = get_all_tasks();
+fn list_tasks(completed: Option<bool>) {
+    let tasks: Vec<Task>;
+    let display_message: String;
+    match completed {
+        Some(completed) => {
+            tasks = get_all_tasks()
+                .into_iter()
+                .filter(|task| task.completed == Some(completed))
+                .collect();
+            display_message = format!(
+                "You have {} {} tasks",
+                tasks.len(),
+                if completed {
+                    "completed"
+                } else {
+                    "uncompleted"
+                }
+            )
+        }
+        _ => {
+            tasks = get_all_tasks();
+            display_message = format!("You have {} tasks", tasks.len())
+        }
+    }
 
-    println!("You have {} tasks: ", tasks.len());
+    println!("{display_message}");
 
     for task in tasks {
         println!("{}", task.title)
     }
 }
 
-fn remove_task() {}
+fn remove_task(completed: Option<bool>, id: Option<i32>) {
+    let tasks: Vec<Task>;
+    let display_message: String;
+
+    match completed {
+        Some(completed) => {
+            tasks = get_all_tasks()
+                .into_iter()
+                .filter(|task| task.completed != Some(completed))
+                .collect();
+            display_message = format!(
+                "Removed tasks that are {}",
+                if completed {
+                    "completed"
+                } else {
+                    "not completed"
+                }
+            )
+        }
+        _ => match id {
+            Some(task_id) => {
+                tasks = get_all_tasks()
+                    .into_iter()
+                    .filter(|task| task.id != task_id)
+                    .collect();
+                display_message = format!("Removed 1 task with the id of: {task_id}");
+            }
+            _ => {
+                tasks = vec![];
+                display_message = format!("Removed all tasks");
+            }
+        },
+    }
+
+    let json = serde_json::to_string(&tasks)
+        .unwrap_or_else(|err| panic!("Error while converting tasks to json: {err:?}"));
+    let mut file = read_tasks_file(true);
+    file.write(json.as_bytes()).unwrap_or_else(|err| {
+        panic!("Error while writing tasks json to the {TASKS_FILE_NAME} file: {err:?}")
+    });
+
+    println!("{display_message}");
+}
 
 fn get_all_tasks() -> Vec<Task> {
     let file = read_tasks_file(false);
