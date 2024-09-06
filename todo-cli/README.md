@@ -20,10 +20,10 @@ This is a simple command-line interface (CLI) application for managing tasks.
 **Clone the Repository**
 
 ```bash
-git clone --depth=1 https://github.com/Aj-Seven/backend-projects
+git clone --depth=1 https://github.com/khaitbek/backend-projects
 
 # Navigate to the project Directory
-cd backend-projects/task-cli
+cd backend-projects/todo-cli
 ```
 
 ## Usage
@@ -31,49 +31,58 @@ cd backend-projects/task-cli
 - **Add a Task**
 
 ```bash
-node index.js add "Drink a Coffee"
+cargo run add "Drink a Coffee"
 ```
 
 - **List all Tasks**
 
 ```bash
-node index.js list
+cargo run list
 ```
 
 - **or by list the tasks by status**
 
 ```bash
-# To list the tasks that are marked as to-do
-node index.js list to-do
+# To list the tasks that are marked as todo
+cargo run list --status=todo
 
 # To list the tasks that are marked as in-progess
-node index.js list in-progress
+cargo run list --status=in-progress
 
 # To list the tasks that are marked as done
-node index.js list done
+cargo run list --status=done
 ```
 
 - **Update a Task**
 
+- **Update title**
+
 ```bash
-node index.js update 1 "Drink a Coffee and Do Coding"
+cargo run update 1 --title="Drink a Coffee and Do Coding"
 ```
 
-- **Mark Task Status**
+- **Update status**
 
 ```bash
-# Mark as `in-progress` with containing task ID as 1
-node index.js mark-in-progress 1
-
-# Mark as `done` with containing task ID as 1
-node index.js mark-done 1
+cargo run update 1 --status="todo"
+cargo run update 1 --status="in-progress"
+cargo run update 1 --status="done"
 ```
 
 - **Delete a Task**
 
 ```bash
 # Delete the task by containing its ID 1
-node index.js delete 1
+cargo run remove 1
+
+# Delete tasks that have the status todo:
+cargo run remove --status="todo"
+
+# Delete tasks that have the status in-progress:
+cargo run remove --status="in-progress"
+
+# Delete tasks that have the status done:
+cargo run remove --status="done"
 ```
 
 ### Sample JSON structure
@@ -81,10 +90,11 @@ node index.js delete 1
 ```JSON
 [
   {
-    "id": 1,
-    "description": "Drink a Coffee",
-    "completed": false,
-    "inProgress": false
+      "id": 272954438,
+      "title": "Task 1 - Complete Report",
+      "status": "DONE",
+      "created_at": "2024-09-02",
+      "updated_at": "2024-09-02"
   }
 ]
 ```

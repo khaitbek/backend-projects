@@ -109,7 +109,10 @@ mod task {
 
     pub fn update(status: Option<status::Status>, title: Option<String>, id: u32) {
         let tasks = get_from_file().into_iter();
-        let task = tasks.clone().find(|task| task.id == id).unwrap();
+        let task = match tasks.clone().find(|task| task.id == id) {
+            Some(task) => task,
+            None => panic!("Couldn't find a task with the given id: {id}"),
+        };
         let mut tasks: Vec<Task> = tasks.filter(|task| task.id != id).collect();
         let new_task = Task {
             id: task.clone().id,
