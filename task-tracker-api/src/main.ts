@@ -7,7 +7,9 @@ import { AppModule } from '@/app.module';
 import swaggerConfig from '@/config/swagger';
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    abortOnError: false,
+  });
 
   swaggerConfig(app);
 
