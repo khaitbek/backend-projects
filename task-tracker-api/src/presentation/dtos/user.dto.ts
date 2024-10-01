@@ -1,6 +1,7 @@
-import { z } from "zod";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { intersection, z } from "zod";
 
-export const createUserSchema = z.object({
+export const signUpSchema = z.object({
   username: z.string().min(3).max(20),
   firstName: z.string().min(3).max(20).optional(),
   lastName: z.string().min(3).max(20).optional(),
@@ -8,7 +9,39 @@ export const createUserSchema = z.object({
   email: z.string().email(),
 });
 
-export type CreateUserDto = z.infer<typeof createUserSchema>;
+export class CreateUserDto {
+  @ApiProperty({
+    title: "Username",
+    example: "john",
+    required: true
+  })
+  username: string;
+
+  @ApiProperty({
+    title: "Email",
+    example: "john@gmail.com"
+  })
+  email: string;
+
+  @ApiProperty({
+    title: "First name",
+    example: "John"
+  })
+  firstName: string;
+
+  @ApiProperty({
+    title: "Last name",
+    example: "Doe"
+  })
+  lastName: string;
+
+  @ApiProperty({
+    title: "Password",
+    minLength: 8,
+    maxLength: 32
+  })
+  password: string;
+}
 
 export const signInSchema = z
   .object({
@@ -17,4 +50,18 @@ export const signInSchema = z
   })
   .required();
 
-export type SignInDto = z.infer<typeof signInSchema>;
+export class SignInDto {
+  @ApiProperty({
+    title: "Username",
+    example: "john",
+    required: true
+  })
+  username: string;
+
+  @ApiProperty({
+    title: "Password",
+    minLength: 8,
+    maxLength: 32
+  })
+  password: string;
+} 
