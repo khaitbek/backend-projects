@@ -1,10 +1,12 @@
 pub mod api {
     use reqwest::{
         header::{HeaderMap, HeaderValue},
-        Client, Error,
+        Client, Error as RequestError, Response,
     };
+    use serde::de::DeserializeOwned;
+    use std::error::Error;
 
-    pub async fn get_user_info(username: &String) -> Result<String, Error> {
+    pub async fn get_user_info(username: &String) -> Result<Response, RequestError> {
         let client = get_client();
         let headers = get_headers();
         let endpoint = format!("https://api.github.com/users/{username}");
@@ -12,8 +14,6 @@ pub mod api {
             .get(endpoint)
             .headers(headers)
             .send()
-            .await?
-            .text()
             .await?;
 
         Ok(response)
@@ -30,5 +30,14 @@ pub mod api {
             HeaderValue::from_str("github-activity-app").unwrap(),
         );
         headers
+    }
+
+    pub async fn parse<Output>(response: Response) -> Result<Output, Box<dyn Error>>
+    where
+        Output: DeserializeOwned,
+    {
+        let text = response.text().await?;
+        let out: Output = serde_json::from_str(&text.as_str())?;
+        Ok(out)
     }
 }
