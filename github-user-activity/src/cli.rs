@@ -11,8 +11,8 @@ pub mod cli {
             self::Cli::parse()
         }
 
-        pub fn get_username() -> String {
-            self::Cli::new().username
+        pub fn get_username(self) -> String {
+            self.username
         }
     }
 }
