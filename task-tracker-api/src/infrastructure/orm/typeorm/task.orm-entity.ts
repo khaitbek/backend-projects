@@ -1,16 +1,16 @@
-import type { Task } from '@/domain/entities/task.entity';
+import { Task } from "@/domain/entities/task.entity";
 import {
   Column,
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from 'typeorm';
+} from "typeorm";
 
 @Entity()
 export class TaskORMEntity implements Task {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: Task["id"];
 
   @Column()
   title: string;
@@ -19,7 +19,10 @@ export class TaskORMEntity implements Task {
   description: string;
 
   @Column()
-  status: string;
+  status: Task["status"];
+
+  @Column()
+  createdBy: Task["createdBy"];
 
   @CreateDateColumn()
   createdAt: Date;

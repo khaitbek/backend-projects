@@ -1,13 +1,13 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get } from "@nestjs/common";
 
 // services
-import { TaskService } from '@/application/services/task.service';
+import { TaskService } from "@/application/task/task.service";
 
-@Controller('task')
+@Controller("task")
 export class TaskController {
   constructor(private readonly service: TaskService) {}
 
-  @Get('/all')
+  @Get("/all")
   getAll() {
     return this.service.getAll();
   }

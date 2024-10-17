@@ -11,7 +11,6 @@ export class ValidationPipe implements PipeTransform {
   constructor(private schema: ZodSchema) {}
 
   transform(value: unknown, metadata: ArgumentMetadata) {
-    console.log(value);
     const result = this.schema.safeParse(value);
     if (!result.success) {
       throw new BadRequestException(result.error.errors);

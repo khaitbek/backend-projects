@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
 
 // repositories
-import { TaskRepository } from '@/domain/repositories/task.repository';
+import { TaskRepository } from "@/domain/repositories/task/task.repository";
 
 @Injectable()
 export class TaskService {
