@@ -1,6 +1,10 @@
+import { Module } from "@nestjs/common";
+
+// repositories
 import { UserRepository } from "@/domain/repositories/user/user.repository";
 import { UserRepositoryImpl } from "@/infrastructure/repositories/user/user.repository.impl";
-import { Module } from "@nestjs/common";
+
+// services
 import { UserService } from "./user.service";
 
 @Module({

@@ -13,7 +13,7 @@ async function bootstrap(): Promise<void> {
   });
 
   swaggerConfig(app);
-  app.useGlobalPipes(new ValidationPipe())
+  app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(3000, () => {
     console.log("Application is running on port 3000");

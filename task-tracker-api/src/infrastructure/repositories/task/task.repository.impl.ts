@@ -1,4 +1,7 @@
+// entities
 import { Task } from "@/domain/entities/task.entity";
+
+// repositories
 import { TaskRepository } from "@/domain/repositories/task/task.repository";
 
 export class TaskRepositoryImpl implements TaskRepository {
