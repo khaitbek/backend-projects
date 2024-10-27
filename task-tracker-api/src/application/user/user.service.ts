@@ -1,6 +1,7 @@
 import { UserRepository } from "@/domain/repositories/user/user.repository";
 import { SignInDto, SignUpDto } from "@/presentation/dtos/user.dto";
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -19,19 +20,31 @@ export class UserService {
     const user = await this.userRepository.getOneByUsernameOrEmail(
       dto.username,
     );
-    if (!user)
-      return new NotFoundException("Username or password is incorrect!");
+    if (!user) {
+      new NotFoundException(
+        "A user with this username or email does not exist!",
+      );
+      return;
+    }
     const checkPassword = await this.userRepository.checkUserPassword(
       dto.password,
       user,
     );
     if (checkPassword === false) {
-      return new UnauthorizedException("Username or password is incorrect!");
+      new UnauthorizedException("Username or password is incorrect!");
+      return;
     }
     return user;
   }
 
   async signUp(dto: SignUpDto) {
-    return await this.userRepository.getOneByUsernameOrEmail(dto.username);
+    const isAlreadyExist = await this.userRepository.getOneByUsernameOrEmail(
+      dto.username,
+    );
+    if (isAlreadyExist) {
+      throw new BadRequestException("Username already exists!");
+    }
+    const user = await this.userRepository.createNew(dto);
+    return user;
   }
 }

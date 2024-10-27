@@ -10,7 +10,7 @@ import { SignInDto, SignUpDto } from "../dtos/user.dto";
 export class AuthController {
   constructor(private readonly service: AuthService) {}
 
-  @Post("/signup")
+  @Post("/sign-up")
   async signUp(@Body() body: SignUpDto) {
     const user = await this.service.signUp(body);
     return user;
@@ -19,8 +19,7 @@ export class AuthController {
   @Post("/sign-in")
   async signIn(@Body() body: SignInDto) {
     try {
-      const user = await this.service.signIn(body);
-      return user;
+      return await this.service.signIn(body);
     } catch (error) {
       return new NotFoundException("Username or password is incorrect!");
     }

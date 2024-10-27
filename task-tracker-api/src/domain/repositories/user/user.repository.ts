@@ -1,4 +1,5 @@
-import { User } from "@/domain/entities/user.entity";
+import { SanitizedUser, User } from "@/domain/entities/user.entity";
+import { SignUpDto } from "@/presentation/dtos/user.dto";
 import { Injectable } from "@nestjs/common";
 
 @Injectable()
@@ -10,5 +11,5 @@ export abstract class UserRepository {
     passwordToBeChecked: string,
     user: User,
   ) => Promise<boolean>;
-  createNew: (dto: any) => Promise<User>;
+  createNew: (dto: SignUpDto) => Promise<SanitizedUser>;
 }

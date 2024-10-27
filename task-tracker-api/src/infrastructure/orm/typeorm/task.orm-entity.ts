@@ -18,7 +18,10 @@ export class TaskORMEntity implements Task {
   @Column()
   description: string;
 
-  @Column()
+  @Column({
+    enum: ["TODO", "IN-PROGRESS", "DONE"],
+    type: "enum",
+  })
   status: Task["status"];
 
   @Column()

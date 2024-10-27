@@ -1,33 +1,24 @@
 import { BadRequestException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 
 // entities
-import { User } from "@/domain/entities/user.entity";
+import { SanitizedUser, User } from "@/domain/entities/user.entity";
+import { UserORMEntity } from "@/infrastructure/orm/typeorm/user.orm-entity";
 
 // repositories
 import { UserRepository } from "@/domain/repositories/user/user.repository";
 
+// dtos
+import { SignUpDto, userToSanitizedUser } from "@/presentation/dtos/user.dto";
+
 export class UserRepositoryImpl implements UserRepository {
-  private readonly users: User[] = [
-    {
-      id: 1,
-      email: "john@gmail.com",
-      password: "sfdsfdfdsf",
-      username: "john",
-      birthDate: "11-03-2005",
-      firstName: "John",
-      lastName: "Boy",
-    },
-    {
-      id: 2,
-      email: "doe@gmail.com",
-      password: "sfdsfdfdsf",
-      username: "doe",
-      birthDate: "11-03-2005",
-      firstName: "doe",
-      lastName: "susan",
-    },
-  ];
-  async createNew(dto: any) {
+  constructor(
+    @InjectRepository(UserORMEntity)
+    private readonly repository: Repository<UserORMEntity>,
+  ) {}
+
+  async createNew(dto: SignUpDto): Promise<SanitizedUser> {
     const isDuplicateEmail = await this.getOneByUsernameOrEmail(dto.email);
     if (isDuplicateEmail !== null) {
       throw new BadRequestException(
@@ -42,12 +33,10 @@ export class UserRepositoryImpl implements UserRepository {
         `The user with the username ${dto.username} already exists!`,
       );
     }
-    const user: User = {
-      id: 3,
-      ...dto,
-    };
-    this.users.push(user);
-    return user;
+
+    const user = await this.repository.save(dto);
+
+    return userToSanitizedUser(user);
   }
 
   async getUserTasks(id: number): Promise<any[]> {
@@ -58,18 +47,17 @@ export class UserRepositoryImpl implements UserRepository {
     return {};
   }
 
-  async getOneByUsernameOrEmail(usernameOrEmail: string) {
-    const user = this.users.find(
-      (user) =>
-        user.username === usernameOrEmail || user.email === usernameOrEmail,
-    );
+  async getOneByUsernameOrEmail(usernameOrEmail: string): Promise<User | null> {
+    const user = await this.repository.findOneBy({
+      email: usernameOrEmail,
+    });
 
     if (!user) return null;
 
     return user;
   }
 
-  async checkUserPassword(password: string, user: User) {
+  async checkUserPassword(password: string, user: User): Promise<boolean> {
     return password === user.password;
   }
 }

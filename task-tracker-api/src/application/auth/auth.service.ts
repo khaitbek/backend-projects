@@ -18,22 +18,20 @@ export class AuthService {
   }
 
   async signIn(body: SignInDto) {
-    // const { username, password } = body;
-    // const user = await this.userService.({
-    //   usernameOrEmail: username
-    // });
-    // if (user === null) {
-    //   throw new Error("Username or password is incorrect!")
-    // }
-    // if (user.password !== password) {
-    //   throw new Error("Username or password is incorrect!")
-    // }
-    // const jwtPayload = {
-    //   sub: user.id,
-    //   username: user.username
-    // }
-    // return {
-    //   accessToken: await this.jwtService.signAsync(jwtPayload)
-    // }
+    const { username, password } = body;
+
+    const user = await this.userService.signIn({
+      username,
+      password,
+    });
+
+    const jwtPayload = {
+      sub: user?.id,
+      username: user?.username,
+    };
+
+    return {
+      accessToken: await this.jwtService.signAsync(jwtPayload),
+    };
   }
 }
