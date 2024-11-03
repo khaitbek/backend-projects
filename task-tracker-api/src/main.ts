@@ -13,10 +13,10 @@ async function bootstrap(): Promise<void> {
   });
 
   swaggerConfig(app);
-  app.useGlobalPipes(new ValidationPipe())
-
-  await app.listen(3000, () => {
-    console.log("Application is running on port 3000");
+  app.useGlobalPipes(new ValidationPipe());
+  const port = process.env.PORT!;
+  await app.listen(port, () => {
+    console.log("Application is running on port: ", port);
   });
 }
 bootstrap();

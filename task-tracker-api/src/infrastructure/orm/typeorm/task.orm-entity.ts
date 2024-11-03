@@ -3,11 +3,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { UserORMEntity } from "./user.orm-entity";
 
-@Entity()
+@Entity({
+  name: "tasks",
+})
 export class TaskORMEntity implements Task {
   @PrimaryGeneratedColumn()
   id: Task["id"];
@@ -15,18 +19,25 @@ export class TaskORMEntity implements Task {
   @Column()
   title: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   description: string;
 
-  @Column()
+  @Column({
+    enum: ["TODO", "IN-PROGRESS", "DONE"],
+    type: "enum",
+    default: "TODO",
+  })
   status: Task["status"];
-
-  @Column()
-  createdBy: Task["createdBy"];
 
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  // relations
+  @ManyToOne(() => UserORMEntity, (user) => user.tasks)
+  createdBy: UserORMEntity["id"];
 }
