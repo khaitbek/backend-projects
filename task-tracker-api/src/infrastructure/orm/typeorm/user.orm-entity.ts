@@ -3,11 +3,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { TaskORMEntity } from "./task.orm-entity";
 
-@Entity()
+@Entity({
+  name: "users",
+})
 export class UserORMEntity implements User {
   @PrimaryGeneratedColumn()
   id: User["id"];
@@ -39,11 +43,15 @@ export class UserORMEntity implements User {
   @Column({
     nullable: true,
   })
-  lastName: string;
+  lastName?: string;
 
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  // relations
+  @OneToMany(() => TaskORMEntity, (task) => task.createdBy)
+  tasks: TaskORMEntity[];
 }

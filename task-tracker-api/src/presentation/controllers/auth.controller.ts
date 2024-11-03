@@ -1,4 +1,9 @@
-import { Body, Controller, NotFoundException, Post } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  NotImplementedException,
+  Post,
+} from "@nestjs/common";
 
 // service
 import { AuthService } from "@/application/auth/auth.service";
@@ -21,7 +26,8 @@ export class AuthController {
     try {
       return await this.service.signIn(body);
     } catch (error) {
-      return new NotFoundException("Username or password is incorrect!");
+      console.log(error);
+      return new NotImplementedException("Unexpected error");
     }
   }
 }

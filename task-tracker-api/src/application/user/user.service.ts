@@ -1,5 +1,6 @@
 import { UserRepository } from "@/domain/repositories/user/user.repository";
 import { SignInDto, SignUpDto } from "@/presentation/dtos/user.dto";
+import { hashPassword } from "@/shared/helpers/password";
 import {
   BadRequestException,
   Injectable,
@@ -44,7 +45,11 @@ export class UserService {
     if (isAlreadyExist) {
       throw new BadRequestException("Username already exists!");
     }
-    const user = await this.userRepository.createNew(dto);
+    const hashedPassword = hashPassword(dto.password);
+    const user = await this.userRepository.createNew({
+      ...dto,
+      password: hashedPassword,
+    });
     return user;
   }
 }

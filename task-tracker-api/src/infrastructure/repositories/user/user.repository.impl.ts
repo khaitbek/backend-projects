@@ -11,6 +11,7 @@ import { UserRepository } from "@/domain/repositories/user/user.repository";
 
 // dtos
 import { SignUpDto, userToSanitizedUser } from "@/presentation/dtos/user.dto";
+import { comparePassword } from "@/shared/helpers/password";
 
 export class UserRepositoryImpl implements UserRepository {
   constructor(
@@ -58,6 +59,6 @@ export class UserRepositoryImpl implements UserRepository {
   }
 
   async checkUserPassword(password: string, user: User): Promise<boolean> {
-    return password === user.password;
+    return comparePassword(password, user.password);
   }
 }
