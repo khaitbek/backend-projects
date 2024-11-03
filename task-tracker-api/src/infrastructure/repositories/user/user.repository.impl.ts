@@ -49,13 +49,17 @@ export class UserRepositoryImpl implements UserRepository {
   }
 
   async getOneByUsernameOrEmail(usernameOrEmail: string): Promise<User | null> {
-    const user = await this.repository.findOneBy({
+    const userByEmail = await this.repository.findOneBy({
       email: usernameOrEmail,
     });
+    if (userByEmail) return userByEmail;
 
-    if (!user) return null;
+    const userByUsername = await this.repository.findOneBy({
+      username: usernameOrEmail,
+    });
+    if (userByUsername) return userByUsername;
 
-    return user;
+    return null;
   }
 
   async checkUserPassword(password: string, user: User): Promise<boolean> {

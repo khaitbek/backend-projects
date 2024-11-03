@@ -21,19 +21,17 @@ export class UserService {
     const user = await this.userRepository.getOneByUsernameOrEmail(
       dto.username,
     );
-    if (!user) {
-      new NotFoundException(
+    if (user == null || user === undefined) {
+      throw new NotFoundException(
         "A user with this username or email does not exist!",
       );
-      return;
     }
     const checkPassword = await this.userRepository.checkUserPassword(
       dto.password,
-      user,
+      user!,
     );
     if (checkPassword === false) {
-      new UnauthorizedException("Username or password is incorrect!");
-      return;
+      throw new UnauthorizedException("Username or password is incorrect!");
     }
     return user;
   }
