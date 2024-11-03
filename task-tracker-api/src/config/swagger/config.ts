@@ -8,7 +8,11 @@ export default function swaggerConfig(app: INestApplication<any>): void {
     .setTitle("Task Tracker API")
     .setDescription("Task Tracker API description")
     .setVersion("1.0")
-    .addTag("task-tracker")
+    .addTag("task-controller")
+    .addTag("auth-controller")
+    .addBearerAuth({
+      type: "http",
+    })
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api", app, document);

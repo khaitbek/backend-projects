@@ -4,6 +4,7 @@ import {
   NotImplementedException,
   Post,
 } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 
 // service
 import { AuthService } from "@/application/auth/auth.service";
@@ -12,6 +13,7 @@ import { AuthService } from "@/application/auth/auth.service";
 import { SignInDto, SignUpDto } from "../dtos/user.dto";
 
 @Controller("/auth")
+@ApiTags("auth-controller")
 export class AuthController {
   constructor(private readonly service: AuthService) {}
 
