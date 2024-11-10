@@ -6,6 +6,7 @@ import { UserRepositoryImpl } from "@/infrastructure/repositories/user/user.repo
 
 // services
 import { UserORMEntity } from "@/infrastructure/orm/typeorm/user.orm-entity";
+import { UserController } from "@/presentation/controllers/user.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { UserService } from "./user.service";
 
@@ -19,5 +20,6 @@ import { UserService } from "./user.service";
     },
   ],
   exports: [UserService],
+  controllers: [UserController],
 })
 export class UserModule {}

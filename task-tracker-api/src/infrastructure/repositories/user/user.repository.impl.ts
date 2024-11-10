@@ -1,22 +1,26 @@
 import { BadRequestException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import type { Repository } from "typeorm";
 
 // entities
-import { SanitizedUser, User } from "@/domain/entities/user.entity";
+import type { SanitizedUser, User } from "@/domain/entities/user.entity";
 import { UserORMEntity } from "@/infrastructure/orm/typeorm/user.orm-entity";
 
 // repositories
 import { UserRepository } from "@/domain/repositories/user/user.repository";
 
 // dtos
-import { SignUpDto, userToSanitizedUser } from "@/presentation/dtos/user.dto";
+import type { SignUpDto } from "@/presentation/dtos/auth.dto";
+
+// helpers
+import { userToSanitizedUser } from "@/presentation/dtos/user.dto";
 import { comparePassword } from "@/shared/helpers/password";
 
 export class UserRepositoryImpl implements UserRepository {
   constructor(
     @InjectRepository(UserORMEntity)
     private readonly repository: Repository<UserORMEntity>,
+    // private readonly tasksRepository: Repository<TaskORMEntity>,
   ) {}
 
   async createNew(dto: SignUpDto): Promise<SanitizedUser> {
@@ -40,12 +44,21 @@ export class UserRepositoryImpl implements UserRepository {
     return userToSanitizedUser(user);
   }
 
-  async getUserTasks(id: number): Promise<any[]> {
-    return [];
-  }
+  // async getUserTasks(id: number): Promise<any[]> {
+  //   const user = await this.repository.findOneBy({ id });
+  //   if (!user) throw new Error("User not found");
+  //   const tasks = await this.tasksRepository.find({
+  //     where: {
+  //       createdBy: user.id,
+  //     },
+  //   });
+  //   return tasks;
+  // }
 
   async getProfile(id: number): Promise<any> {
-    return {};
+    const user = await this.repository.findOneBy({ id });
+    if (!user) throw new Error("User not found");
+    return userToSanitizedUser(user);
   }
 
   async getOneByUsernameOrEmail(usernameOrEmail: string): Promise<User | null> {

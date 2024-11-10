@@ -1,5 +1,5 @@
-import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
+import { patchNestJsSwagger } from "nestjs-zod";
 
 // modules
 import { AppModule } from "@/app.module";
@@ -11,9 +11,9 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, {
     abortOnError: false,
   });
-
+  patchNestJsSwagger();
   swaggerConfig(app);
-  app.useGlobalPipes(new ValidationPipe());
+  app.enableCors();
   const port = process.env.PORT!;
   await app.listen(port, () => {
     console.log("Application is running on port: ", port);

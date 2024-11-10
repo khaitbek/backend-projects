@@ -15,4 +15,4 @@ export class User {
   lastName?: string;
 }
 
-export interface SanitizedUser extends Omit<User, "password"> {}
+export type SanitizedUser = Omit<User, "password">;

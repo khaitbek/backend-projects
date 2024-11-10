@@ -1,7 +1,7 @@
 import { SanitizedUser, User } from "@/domain/entities/user.entity";
 import { IsEmail, IsNotEmpty, MinLength } from "class-validator";
 
-export class SignUpDto {
+export class NewUserDto {
   @IsNotEmpty()
   username: string;
 
@@ -16,15 +16,6 @@ export class SignUpDto {
   email: string;
 
   birthDate?: string;
-}
-
-export class SignInDto {
-  @IsNotEmpty()
-  username: string;
-
-  @IsNotEmpty()
-  @MinLength(8)
-  password: string;
 }
 
 export const userToSanitizedUser = (user: User): SanitizedUser => {

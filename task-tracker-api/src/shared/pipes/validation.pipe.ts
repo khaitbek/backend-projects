@@ -1,6 +1,6 @@
 import {
   type ArgumentMetadata,
-  BadRequestException,
+  HttpException,
   Injectable,
   PipeTransform,
 } from "@nestjs/common";
@@ -13,7 +13,14 @@ export class ValidationPipe implements PipeTransform {
   transform(value: unknown, metadata: ArgumentMetadata) {
     const result = this.schema.safeParse(value);
     if (!result.success) {
-      throw new BadRequestException(result.error.errors);
+      throw new HttpException(
+        {
+          status: 400,
+          message: result.error.issues.map((issue) => issue.message),
+          name: result.error.name,
+        },
+        400,
+      );
     }
     return value;
   }

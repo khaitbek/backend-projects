@@ -1,8 +1,9 @@
 import {
   Body,
   Controller,
-  NotImplementedException,
+  HttpException,
   Post,
+  UsePipes,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 
@@ -10,7 +11,15 @@ import { ApiTags } from "@nestjs/swagger";
 import { AuthService } from "@/application/auth/auth.service";
 
 // dtos
-import { SignInDto, SignUpDto } from "../dtos/user.dto";
+import { BaseError } from "@/shared/helpers/error";
+import { SuccessResponse } from "@/shared/helpers/response";
+import { ValidationPipe } from "@/shared/pipes/validation.pipe";
+import {
+  SignInDto,
+  signInSchema,
+  SignUpDto,
+  signUpSchema,
+} from "../dtos/auth.dto";
 
 @Controller("/auth")
 @ApiTags("auth-controller")
@@ -18,18 +27,26 @@ export class AuthController {
   constructor(private readonly service: AuthService) {}
 
   @Post("/sign-up")
+  @UsePipes(new ValidationPipe(signUpSchema))
   async signUp(@Body() body: SignUpDto) {
-    const user = await this.service.signUp(body);
-    return user;
+    try {
+      const user = await this.service.signUp(body);
+      return user;
+    } catch (err) {
+      const error = err as BaseError<unknown>;
+      return new HttpException(error.message, error.statusCode);
+    }
   }
 
   @Post("/sign-in")
+  @UsePipes(new ValidationPipe(signInSchema))
   async signIn(@Body() body: SignInDto) {
     try {
-      return await this.service.signIn(body);
-    } catch (error) {
-      console.log(error);
-      return new NotImplementedException("Unexpected error");
+      const response = await this.service.signIn(body);
+      return new SuccessResponse(response);
+    } catch (err) {
+      const error = err as BaseError<unknown>;
+      return new HttpException(error.message, error.statusCode);
     }
   }
 }
