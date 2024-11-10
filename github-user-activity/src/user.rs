@@ -3,7 +3,7 @@ pub mod user {
     #[derive(Debug, Deserialize, Serialize)]
     pub struct User {
         name: String,
-        location: String,
+        location: Option<String>,
         followers: u128,
         following: u128,
         created_at: String,
@@ -28,6 +28,10 @@ pub mod user {
             }
         }
 
+        pub fn get_id(&self) -> u128 {
+            self.id
+        }
+
         pub fn get_profile_img(&self) -> &String {
             &self.avatar_url
         }
@@ -40,8 +44,15 @@ pub mod user {
             &self.login
         }
 
-        pub fn get_location(&self) -> &String {
-            &self.location
+        pub fn get_location(&self) -> String {
+            match &self.location {
+                Some(location) => {
+                    location.clone()
+                }
+                _ => {
+                    String::from("Unknown")
+                }
+            }
         }
 
         pub fn get_created_date(&self) -> &String {

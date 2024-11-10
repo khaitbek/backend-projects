@@ -1,4 +1,4 @@
-use image::{DynamicImage, GenericImageView, ImageOutputFormat};
+use image::{DynamicImage, GenericImageView};
 use std::error::Error;
 
 const ASCII_CHARS: &str = "@%#*+=-:. ";
@@ -22,7 +22,7 @@ pub fn convert_to_ascii(img: DynamicImage, width: u32) -> String {
     // Build the ASCII representation
     let mut ascii_art = String::new();
     for (i, pixel) in grayscale.pixels().enumerate() {
-        let brightness = pixel[0];  // Get pixel brightness (0-255)
+        let brightness = pixel[0]; // Get pixel brightness (0-255)
         let ascii_char = map_brightness_to_ascii(brightness);
 
         ascii_art.push(ascii_char);
