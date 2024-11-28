@@ -38,6 +38,6 @@ export class TaskORMEntity implements Task {
   updatedAt: Date;
 
   // relations
-  @ManyToOne(() => UserORMEntity, (user) => user.tasks)
+  @ManyToOne(() => UserORMEntity, (user) => user.tasks, { nullable: false })
   createdBy: UserORMEntity["id"];
 }

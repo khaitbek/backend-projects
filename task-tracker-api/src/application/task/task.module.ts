@@ -1,15 +1,19 @@
 import { Module } from "@nestjs/common";
 
+// entities
+import { TaskORMEntity } from "@/infrastructure/orm/typeorm/task.orm-entity";
+
 // modules
 import { TypeOrmModule } from "@nestjs/typeorm";
 
 // services
 import { TaskService } from "./task.service";
 
-// controllers
+// repositories
 import { TaskRepository } from "@/domain/repositories/task/task.repository";
-import { TaskORMEntity } from "@/infrastructure/orm/typeorm/task.orm-entity";
 import { TaskRepositoryImpl } from "@/infrastructure/repositories/task/task.repository.impl";
+
+// controllers
 import { TaskController } from "@/presentation/controllers/task.controller";
 
 @Module({

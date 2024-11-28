@@ -6,12 +6,12 @@ import { JwtModule } from "@nestjs/jwt";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AuthModule } from "./application/auth/auth.module";
 import { UserModule } from "./application/user/user.module";
+import { TaskModule } from "./application/task/task.module";
 
 // helpers
 import dbConfig, { DbConfig } from "./config/db/db.config";
 
 // entities
-import { TaskModule } from "./application/task/task.module";
 import { TaskORMEntity } from "./infrastructure/orm/typeorm/task.orm-entity";
 import { UserORMEntity } from "./infrastructure/orm/typeorm/user.orm-entity";
 

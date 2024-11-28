@@ -13,6 +13,7 @@ export const taskSchema = extendApi(
   }),
 );
 
-export class TaskDto extends createZodDto(taskSchema) {}
-export class GetAllTasksDto extends createZodDto(taskSchema.array()) {}
-export class GetOneTaskByIdDto extends createZodDto(taskSchema) {}
+export class TaskDto extends createZodDto(taskSchema) { }
+export class CreateTaskDto extends createZodDto(taskSchema.pick({ status: true, description: true, title: true })) { }
+export class GetAllTasksDto extends createZodDto(taskSchema.array()) { }
+export class GetOneTaskByIdDto extends createZodDto(taskSchema) { }
